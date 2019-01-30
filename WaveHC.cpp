@@ -158,6 +158,8 @@ http://www.atmel.com/dyn/resources/prod_documents/doc8161.pdf
  
  */  
 
+#include <Arduino.h>
+
 #include <string.h>
 #include <avr/interrupt.h>
 #include <mcpDac.h>
@@ -187,15 +189,25 @@ uint8_t sdstatus = 0;
 //------------------------------------------------------------------------------
 // timer interrupt for DAC
 ISR(TIMER1_COMPA_vect) {
+
   if (!playing) return;
 
-  if (playpos >= playend) {
+  bool done = false;
+  // two conditions that indicate playback of current buffer is done..
+  if (playing->reverse && playpos <= playend) done = true;
+  if (!playing->reverse && (playpos >= playend)) done = true;
+  if (done) {
     if (sdstatus == SD_READY) {
     
       // swap double buffers
-      playpos = sdbuff;
-      playend = sdend;
-      sdbuff = sdbuff != buffer1 ? buffer1 : buffer2;
+      if (playing->reverse) {
+        playpos = sdend;
+        playend = sdbuff;
+      } else {
+        playpos = sdbuff;
+        playend = sdend;
+      }
+      sdbuff = (sdbuff != buffer1) ? buffer1 : buffer2;
       
       sdstatus = SD_FILLING;
       // interrupt to call SD reader
@@ -220,14 +232,14 @@ ISR(TIMER1_COMPA_vect) {
     // 16-bit is signed
     dh = 0X80 ^ playpos[1];
     dl = playpos[0];
-    playpos += 2;
+    (playing->reverse) ? playpos -= 2 : playpos += 2;
   }
   else {
   
     // 8-bit is unsigned
     dh = playpos[0];
     dl = 0;
-    playpos++;
+    (playing->reverse) ? playpos-- : playpos++;
   }
   
 #if DVOLUME
@@ -403,6 +415,7 @@ uint8_t WaveHC::create(FatReader &f) {
 
   errors = 0;
   isplaying = 0;
+  reverse = true;
   remainingBytesInChunk = 0;
   
 #if DVOLUME
@@ -451,9 +464,13 @@ void WaveHC::play(void) {
   // fill the play buffer
   read = readWaveData(buffer1, PLAYBUFFLEN);
   if (read <= 0) return;
-  playpos = buffer1;
-  playend = buffer1 + read;
-
+  if (reverse) {
+      playpos = buffer1 + read;
+      playend = buffer1;
+  } else {
+      playpos = buffer1;
+      playend = buffer1 + read;
+  }
   // fill the second buffer
   read = readWaveData(buffer2, PLAYBUFFLEN);
   if (read < 0) return;
@@ -516,6 +533,12 @@ int16_t WaveHC::readWaveData(uint8_t *buff, uint16_t len) {
   if (len > remainingBytesInChunk) {
     len = remainingBytesInChunk;
   }
+
+  /*
+  if (reverse) {
+    fd->seekCur(-1);
+  }
+  */
   
   int16_t ret = fd->read(buff, len);
   if (ret > 0) remainingBytesInChunk -= ret;

@@ -91,6 +91,8 @@ public:
   uint32_t remainingBytesInChunk;
   /** Has the value true if a wave file is playing else false. */
   volatile uint8_t isplaying;
+  /** Has the value true if a wave file is to be played backwards, else false. */
+  volatile uint8_t reverse;
   /** Number of times data was not available from the SD in the DAC ISR */
   uint32_t errors;
 

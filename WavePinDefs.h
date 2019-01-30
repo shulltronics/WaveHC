@@ -31,14 +31,14 @@
 
 // use arduino pins 2, 3, 4, 5 for DAC
 
-// pin 2 is DAC chip select
+// pin 4 is DAC chip select
 
 /** Data direction register for DAC chip select. */
-#define MCP_DAC_CS_DDR  PIN2_DDRREG
+#define MCP_DAC_CS_DDR  PIN4_DDRREG
 /** Port register for DAC chip select. */
-#define MCP_DAC_CS_PORT PIN2_PORTREG
+#define MCP_DAC_CS_PORT PIN4_PORTREG
 /** Port bit number for DAC chip select. */
-#define MCP_DAC_CS_BIT  PIN2_BITNUM
+#define MCP_DAC_CS_BIT  PIN4_BITNUM
 
 // pin 3 is DAC serial clock
 /** Data direction register for DAC clock. */
@@ -48,14 +48,14 @@
 /** Port bit number for DAC clock. */
 #define MCP_DAC_SCK_BIT  PIN3_BITNUM
 
-// pin 4 is DAC serial data in
+// pin 2 is DAC serial data in
 
 /** Data direction register for DAC serial in. */
-#define MCP_DAC_SDI_DDR  PIN4_DDRREG
+#define MCP_DAC_SDI_DDR  PIN2_DDRREG
 /** Port register for DAC clock. */
-#define MCP_DAC_SDI_PORT PIN4_PORTREG
+#define MCP_DAC_SDI_PORT PIN2_PORTREG
 /** Port bit number for DAC clock. */
-#define MCP_DAC_SDI_BIT  PIN4_BITNUM
+#define MCP_DAC_SDI_BIT  PIN2_BITNUM
 
 // pin 5 is LDAC if used
 #if USE_MCP_DAC_LDAC

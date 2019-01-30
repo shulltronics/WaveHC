@@ -113,6 +113,7 @@ public:
   void play(void);
   int16_t readWaveData(uint8_t *buff, uint16_t len);
   void resume(void);
+  uint32_t getCurPosition(void) {return fd->readPosition();};
   void seek(uint32_t pos);
   void setSampleRate(uint32_t samplerate);
   void stop(void);

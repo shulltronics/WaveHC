@@ -36,7 +36,7 @@
  * Default card SPI speed. Change to true for Wave Shield V1.0
  * The SPI speed is 4 Mhz for 'true' and 8 Mhz for 'false'.
  */
-#define SPI_DEFAULT_HALF_SPEED false
+#define SPI_DEFAULT_HALF_SPEED true
 
 /** read timeout ms */
 #define SD_READ_TIMEOUT    300

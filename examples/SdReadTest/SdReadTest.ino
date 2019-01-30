@@ -9,7 +9,7 @@ SdReader card;
 uint8_t cidDmp(void) {
   cid_t cid;
   if (!card.readCID(cid)) {
-    putstring("readCID failed");
+    putstring_nl("readCID failed");
     sdError();
     return 0;
   }
@@ -62,19 +62,21 @@ uint8_t partDmp(void) {
 void sdError(void) {
   putstring_nl("SD error");
   putstring("errorCode: ");
-  Serial.println(card.errorCode(), HEX);
+  Serial.println(card.errorCode());
   putstring("errorData: ");
-  Serial.println(card.errorData(), HEX);  
+  Serial.println(card.errorData());  
   return;
 }
+
 void setup(void) {
   Serial.begin(9600);
+  Serial.println("hi...");
 }
 
 void loop(void) {
   while (Serial.read() >= 0) {}
-  putstring_nl("\ntype any character to start");
-  while (Serial.read() < 0) {}
+  //putstring_nl("\ntype any character to start");
+  //while (Serial.read() < 0) {}
   uint32_t t0 = millis();
   uint8_t r = card.init(0);
   uint32_t d = millis()- t0;
